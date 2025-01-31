@@ -4,69 +4,73 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Weather App</title>
+        <base href="/"> <!-- Add this line for correct path resolution -->
         <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background: darkviolet;
-            color: #fff;
-            background-image: url('https://design4users.com/wp-content/uploads/2017/08/weather-app-dashboard-1024x730.jpg'); background-size: cover; background-repeat: no-repeat;background-position: center;
-        }
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                background: darkviolet;
+                color: #fff;
+                background-image: url('https://design4users.com/wp-content/uploads/2017/08/weather-app-dashboard-1024x730.jpg');
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-position: center;
+            }
 
-        .weather-app {
-            text-decoration: underline;
-            color: skyblue;
-            background: darkblue;
-            border-radius: 10px;
-            padding: 20px;
-            text-align: center;
-            width: 300px;
-            box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.3);
-            border: 2px solid green;
-        }
+            .weather-app {
+                text-decoration: underline;
+                color: skyblue;
+                background: darkblue;
+                border-radius: 10px;
+                padding: 20px;
+                text-align: center;
+                width: 300px;
+                box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.3);
+                border: 2px solid green;
+            }
 
-        .weather-app input {
-            padding: 10px;
-            width: calc(100% - 20px);
-            border: none;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            background-color: lightgrey;
-        }
+            .weather-app input {
+                padding: 10px;
+                width: calc(100% - 20px);
+                border: none;
+                border-radius: 5px;
+                margin-bottom: 20px;
+                background-color: lightgrey;
+            }
 
-        .weather-app button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            background-color: #ff9800;
-            color: whitesmoke;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
+            .weather-app button {
+                padding: 10px 20px;
+                border: none;
+                border-radius: 5px;
+                background-color: #ff9800;
+                color: whitesmoke;
+                font-weight: bold;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
 
-        .weather-app button:hover {
-            background-color: darkgoldenrod;
-        }
+            .weather-app button:hover {
+                background-color: darkgoldenrod;
+            }
 
-        .weather-info {
-            margin-top: 20px;
-        }
+            .weather-info {
+                margin-top: 20px;
+            }
 
-        .weather-info h2 {
-            margin: 0;
-            font-size: 24px;
-        }
+            .weather-info h2 {
+                margin: 0;
+                font-size: 24px;
+            }
 
-        .weather-info p {
-            margin: 5px 0;
-        }
-    </style>
+            .weather-info p {
+                margin: 5px 0;
+            }
+        </style>
     </head>
     <body>
         <div class="weather-app">
@@ -77,34 +81,36 @@
         </div>
 
         <script>
-        async function fetchWeather() {
-            const location = document.getElementById('location').value;
-            if (!location) {
-                document.getElementById('weatherInfo').innerHTML = `<p>Please enter a location.</p>`;
-                return;
-            }
-    
-            try {
-                const response = await fetch(`/api/weather?location=${location}`);
-                const data = await response.json();
-    
-                if (data.error) {
-                    throw new Error(data.error);
+            async function fetchWeather() {
+                const location = document.getElementById('location').value;
+                if (!location) {
+                    document.getElementById('weatherInfo').innerHTML = `<p>Please enter a location.</p>`;
+                    return;
                 }
-    
-                const weatherInfo = `
-                    <h2>${data.location.name}, ${data.location.country}</h2>
-                    <p>Temperature: ${data.current.temp_c}°C</p>
-                    <p>Condition: ${data.current.condition.text}</p>
-                    <p>Humidity: ${data.current.humidity}%</p>
-                    <p>Wind: ${data.current.wind_kph} km/h</p>
-                `;
-                document.getElementById('weatherInfo').innerHTML = weatherInfo;
-            } catch (error) {
-                document.getElementById('weatherInfo').innerHTML = `<p>${error.message}</p>`;
-            }
-        }
-    </script>
 
+                try {
+                    const response = await fetch(`/api/weather?location=${encodeURIComponent(location)}`);
+                    if (!response.ok) {
+                        throw new Error("Failed to fetch weather data");
+                    }
+                    const data = await response.json();
+
+                    if (data.error) {
+                        throw new Error(data.error);
+                    }
+
+                    const weatherInfo = `
+                        <h2>${data.location.name}, ${data.location.country}</h2>
+                        <p>Temperature: ${data.current.temp_c}°C</p>
+                        <p>Condition: ${data.current.condition.text}</p>
+                        <p>Humidity: ${data.current.humidity}%</p>
+                        <p>Wind: ${data.current.wind_kph} km/h</p>
+                    `;
+                    document.getElementById('weatherInfo').innerHTML = weatherInfo;
+                } catch (error) {
+                    document.getElementById('weatherInfo').innerHTML = `<p>${error.message}</p>`;
+                }
+            }
+        </script>
     </body>
 </html>

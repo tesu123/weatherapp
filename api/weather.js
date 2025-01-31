@@ -6,12 +6,12 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: "Location is required" });
     }
 
-    const apiUrl = `http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${location}&aqi=yes`;
+    const apiUrl = `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${location}&aqi=yes`;
 
     try {
         const response = await fetch(apiUrl);
         if (!response.ok) {
-            throw new Error("Location not found");
+            throw new Error("Location not found or API request failed");
         }
         const data = await response.json();
         res.status(200).json(data);
